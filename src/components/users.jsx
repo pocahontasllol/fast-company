@@ -27,40 +27,20 @@ const Users = () => {
       : " Никто  не тусанет с тобой сегодня";
   };
 
-const isHasUsers = users.length !== 0
+const isHasUsers = users.length > 0
 const getBadgeClasses = (isHasUsers) => {
   let classes = "badge fw-bold d-inline-block mt-2 p-2 m-2 text-white "
   return isHasUsers ? classes + "bg-primary" : classes + "bg-danger"  
 }
 
-
-  const renderColors = (user) => {
-    return user.map((qualities) => {
-      const classes = "badge m-1 bg-" + qualities.color;
-      return (
-        <div className={classes} key={qualities.name}>
-          {qualities.name}
-        </div>
-      );
-    });
-  };
-
-  let title = () => {
-    return (
-      <h2 className="badge bg-primary ">
-        {users.length} Человек тусанет с тобой сегодння{" "}
-      </h2>
-    );
-  };
-
   const renderQualities = (qualities) => {
-    return qualities.map((qualities) => {
+    return qualities.map((quality) => {
       return (
         <span
-          key={qualities.name}
-          className={`badge m-1 bg-${qualities.color}`}
+          key={quality._id}
+          className={`badge m-1 bg-${quality.color}`}
         >
-          {qualities.name}
+          {quality.name}
         </span>
       );
     });
