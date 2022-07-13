@@ -27,25 +27,26 @@ const Users = () => {
       : " Никто  не тусанет с тобой сегодня";
   };
 
-const isHasUsers = users.length !== 0
+const isHasUsers = users.length > 0 // так будет боллее понятно 
+
 const getBadgeClasses = (isHasUsers) => {
   let classes = "badge fw-bold d-inline-block mt-2 p-2 m-2 text-white "
   return isHasUsers ? classes + "bg-primary" : classes + "bg-danger"  
 }
 
+const renderColors = (user) => { // Зачем она? 
+  return user.map((qualities) => {
+    const classes = "badge m-1 bg-" + qualities.color;
+      
+    return (
+      <div className={classes} key={qualities.name}>
+        {qualities.name}
+      </div>
+    );
+  });
+};
 
-  const renderColors = (user) => {
-    return user.map((qualities) => {
-      const classes = "badge m-1 bg-" + qualities.color;
-      return (
-        <div className={classes} key={qualities.name}>
-          {qualities.name}
-        </div>
-      );
-    });
-  };
-
-  let title = () => {
+  let title = () => { // зачем, если не используется 
     return (
       <h2 className="badge bg-primary ">
         {users.length} Человек тусанет с тобой сегодння{" "}
@@ -54,10 +55,10 @@ const getBadgeClasses = (isHasUsers) => {
   };
 
   const renderQualities = (qualities) => {
-    return qualities.map((qualities) => {
+    return qualities.map((quality) => {
       return (
         <span
-          key={qualities.name}
+          key={qualities.name} // - надо делать уникальным, name - это не уникальный 
           className={`badge m-1 bg-${qualities.color}`}
         >
           {qualities.name}
@@ -65,6 +66,7 @@ const getBadgeClasses = (isHasUsers) => {
       );
     });
   };
+  
   let userParams = users.map((item) => {
     return (
       <tr key={item._id}>
