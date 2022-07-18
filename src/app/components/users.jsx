@@ -9,7 +9,6 @@ const Users = () => {
   const [users, setUsers] = useState(api.users.fetchAll());
 
   let handleDelete = (userId) => {
-
     let newUser = users.filter(user=>user._id !== userId)
     
     setUsers(newUser)
@@ -21,7 +20,6 @@ const Users = () => {
     return isHasUsers ? classes + "bg-primary" : classes + "bg-danger";
   };
 
-
   const handleCheckOnChange = (id, value) => {
     const newUsers = users.map(user => {
       if (user._id === id) {
@@ -30,9 +28,7 @@ const Users = () => {
       return user;
     })
     setUsers(newUsers)
-    
   }
-
 
   let userParams = users.map((item) => {
     return (
