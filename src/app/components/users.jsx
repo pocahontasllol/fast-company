@@ -2,11 +2,14 @@ import React from "react";
 import { useState } from "react";
 import api from "../api";
 import Bookmark from "./bookmark";
+import Pagination from "./pagination";
 import renderPhrase from "./phrase";
 import renderQualities from "./qualitie";
 
 const Users = () => {
   const [users, setUsers] = useState(api.users.fetchAll());
+
+  const count = users.length 
 
   let handleDelete = (userId) => {
 
@@ -80,6 +83,9 @@ const Users = () => {
         </thead>
         <tbody>{userParams}</tbody>
       </table>
+      <Pagination itemsCounts/>
+      {/* 1,2,3 */}
+      {/* user/pageSize  */}
     </>
   );
 };
