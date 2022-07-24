@@ -1,14 +1,9 @@
-
 const renderPhrase = (number) => {
-  const phrase = [
-    " человек тусанет",
-    " человека тусанут",
-    " человек тусанет",
-  ];
-  let cases = [2, 0, 1, 1, 1, 2];
+  const phrase = [" человек тусанет", " человека тусанут", " человек тусанет"];
+  const cases = [2, 0, 1, 1, 1, 2];
   return number
     ? number +
-        phrase [
+        phrase[
           number % 100 > 4 && number % 100 < 20
             ? 2
             : cases[number % 10 < 5 ? number % 10 : 5]
@@ -23,4 +18,4 @@ const renderPhrase = (number) => {
 //       if (lastOne === 1) return "человек тусанет"
 //       return 'человек тусанет'
 // }
-export default renderPhrase
+export default renderPhrase;

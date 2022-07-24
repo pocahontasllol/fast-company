@@ -1,43 +1,50 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import api from "../api";
 import Bookmark from "./bookmark";
 import Pagination from "./pagination";
 import renderPhrase from "./phrase";
 import renderQualities from "./qualitie";
+import { paginate } from "../utils/paginate";
+// import PropTypes from "prop-types";
 
 const Users = () => {
   const [users, setUsers] = useState(api.users.fetchAll());
+  // const [users, setUsers] = useState([])
+  const count = users.length;
 
-  const count = users.length 
+  const pageSize = 4;
 
-  let handleDelete = (userId) => {
+  const [currentPage, setCurrentPage] = useState(1);
 
-    let newUser = users.filter(user=>user._id !== userId)
-    
-    setUsers(newUser)
+  const handlePageChange = (pageIndex) => {
+    setCurrentPage(pageIndex);
   };
 
-  const isHasUsers = users.length > 0;
+  const userCrop = paginate(users, currentPage, pageSize);
+
+  const handleDelete = (userId) => {
+    const newUser = users.filter((user) => user._id !== userId);
+
+    setUsers(newUser);
+  };
+
+  const isHasUsers = count > 0;
   const getBadgeClasses = (isHasUsers) => {
-    let classes = "badge fw-bold d-inline-block mt-2 p-2 m-2 text-white ";
+    const classes = "badge fw-bold d-inline-block mt-2 p-2 m-2 text-white ";
     return isHasUsers ? classes + "bg-primary" : classes + "bg-danger";
   };
 
-
   const handleCheckOnChange = (id, value) => {
-    const newUsers = users.map(user => {
+    const newUsers = users.map((user) => {
       if (user._id === id) {
-        return ({...user,bookmark: value})
+        return { ...user, bookmark: value };
       }
       return user;
-    })
-    setUsers(newUsers)
-    
-  }
+    });
+    setUsers(newUsers);
+  };
 
-
-  let userParams = users.map((item) => {
+  const userParams = userCrop.map((item) => {
     return (
       <tr key={item._id}>
         <td>{item.name}</td>
@@ -49,13 +56,15 @@ const Users = () => {
           <Bookmark
             key={item._id}
             id={item._id}
-            text={item.name}
             value={item.bookmark}
-            onChange={handleCheckOnChange}
+            onClick={handleCheckOnChange}
           />
         </td>
         <td>
-          <button className="btn btn-danger btn-sm" onClick={() => handleDelete(item._id)}>
+          <button
+            className="btn btn-danger btn-sm"
+            onClick={() => handleDelete(item._id)}
+          >
             delete
           </button>
         </td>
@@ -83,9 +92,12 @@ const Users = () => {
         </thead>
         <tbody>{userParams}</tbody>
       </table>
-      <Pagination itemsCounts/>
-      {/* 1,2,3 */}
-      {/* user/pageSize  */}
+      <Pagination
+        itemsCounts={count}
+        pageSize={pageSize}
+        currentPage={currentPage}
+        onPageChange={handlePageChange}
+      />
     </>
   );
 };
