@@ -1,27 +1,46 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import api from "../api";
 import Bookmark from "./bookmark";
 import Pagination from "./pagination";
 import renderPhrase from "./phrase";
 import renderQualities from "./qualitie";
 import { paginate } from "../utils/paginate";
-// import PropTypes from "prop-types";
+import GroupList from "./groupList";
 
 const Users = () => {
-  const [users, setUsers] = useState(api.users.fetchAll());
-  // const [users, setUsers] = useState([])
-  const count = users.length;
-
-  const pageSize = 4;
-
+  const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 2;
+  const [selectedProf, setSelectedProf] = useState();
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, selectedProf);
+  const handleProfessionSelect = (item) => {
+    setSelectedProf(item);
+  };
+
+  const [professions, setProfessions] = useState();
   const handlePageChange = (pageIndex) => {
     setCurrentPage(pageIndex);
   };
+  useEffect(() => {
+    api.users.fetchAll().then((users) => setUsers(users));
+  }, []);
 
-  const userCrop = paginate(users, currentPage, pageSize);
+  useEffect(() => {
+    api.professions.fetchAll().then((data) => setProfessions(data));
+  }, []);
 
+  const filteredUsers = selectedProf
+    ? users.filter((user) => user.profession === selectedProf)
+    : users;
+  const count = filteredUsers.length;
+  const userCrop = paginate(filteredUsers, currentPage, pageSize);
+
+  const clearFilter = () => {
+    setSelectedProf();
+  };
   const handleDelete = (userId) => {
     const newUser = users.filter((user) => user._id !== userId);
 
@@ -73,32 +92,50 @@ const Users = () => {
   });
 
   return (
-    <>
-      <h2>
-        <span className={getBadgeClasses(isHasUsers)}>
-          {renderPhrase(users.length)}
-        </span>
-      </h2>
-      <table className="table">
-        <thead>
-          <tr>
-            <th scope="col">Имя</th>
-            <th scope="col">Качества</th>
-            <th scope="col">Профессия</th>
-            <th scope="col">Встретились,раз</th>
-            <th scope="col">Оценка</th>
-            <th scope="col">Избранное</th>
-          </tr>
-        </thead>
-        <tbody>{userParams}</tbody>
-      </table>
-      <Pagination
-        itemsCounts={count}
-        pageSize={pageSize}
-        currentPage={currentPage}
-        onPageChange={handlePageChange}
-      />
-    </>
+    <div className="d-flex">
+      {professions && (
+        <div className="d-flex-column flex-shrink-0 p-3">
+          <GroupList
+            items={professions}
+            onItemSelect={handleProfessionSelect}
+            selectedItem={selectedProf}
+          />
+          <button className="btn btn-secondary mt-2" onClick={clearFilter}>
+            Очистить
+          </button>
+        </div>
+      )}
+      <div className="d-flex flex-column">
+        <h2>
+          <span className={getBadgeClasses(isHasUsers)}>
+            {renderPhrase(count)}
+          </span>
+        </h2>
+        {count > 0 && (
+          <table className="table">
+            <thead>
+              <tr>
+                <th scope="col">Имя</th>
+                <th scope="col">Качества</th>
+                <th scope="col">Профессия</th>
+                <th scope="col">Встретились,раз</th>
+                <th scope="col">Оценка</th>
+                <th scope="col">Избранное</th>
+              </tr>
+            </thead>
+            <tbody>{userParams}</tbody>
+          </table>
+        )}
+        <div className="d-flex justify-content-center">
+          <Pagination
+            itemsCounts={count}
+            pageSize={pageSize}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+          />
+        </div>
+      </div>
+    </div>
   );
 };
 export default Users;
