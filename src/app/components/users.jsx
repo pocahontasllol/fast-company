@@ -10,30 +10,30 @@ import GroupList from "./groupList";
 const Users = () => {
   const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [professions, setProfessions] = useState([]);
+  const [selectedProf, setSelectedProf] = useState(); // старайся задавать значение по умолчанию useState(null)
+  
   const pageSize = 2;
-  const [selectedProf, setSelectedProf] = useState();
 
   useEffect(() => {
+    api.users.fetchAll().then((users) => setUsers(users));
+    api.professions.fetchAll().then((data) => setProfessions(data));
+  }, []);
+  
+  useEffect(() => {
     setCurrentPage(1);
-  }, selectedProf);
+  }, [selectedProf]);
+  
   const handleProfessionSelect = (item) => {
     setSelectedProf(item);
   };
-
-  const [professions, setProfessions] = useState();
+  
   const handlePageChange = (pageIndex) => {
     setCurrentPage(pageIndex);
   };
-  useEffect(() => {
-    api.users.fetchAll().then((users) => setUsers(users));
-  }, []);
-
-  useEffect(() => {
-    api.professions.fetchAll().then((data) => setProfessions(data));
-  }, []);
 
   const filteredUsers = selectedProf
-    ? users.filter((user) => user.profession === selectedProf)
+    ? users.filter((user) => user.profession === selectedProf) // так не должно работать 
     : users;
   const count = filteredUsers.length;
   const userCrop = paginate(filteredUsers, currentPage, pageSize);
